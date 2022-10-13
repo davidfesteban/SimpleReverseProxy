@@ -8,7 +8,7 @@ import java.io.OutputStream;
 import java.net.Socket;
 
 @Slf4j
-public class ClientHandler extends Thread {
+public class ClientHandler {
 
     private final Socket client;
     private final Socket service;
@@ -19,9 +19,7 @@ public class ClientHandler extends Thread {
         this.service = service;
     }
 
-    @Override
     public void run() {
-        super.run();
         try (client;
              service;
              final InputStream streamFromClient = client.getInputStream();
@@ -39,10 +37,5 @@ public class ClientHandler extends Thread {
         } catch (Exception e) {
             log.error(e.getMessage());
         }
-    }
-
-    public ClientHandler startNow() {
-        start();
-        return this;
     }
 }

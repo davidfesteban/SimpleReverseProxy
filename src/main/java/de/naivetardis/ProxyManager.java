@@ -49,9 +49,11 @@ public class ProxyManager extends Thread {
 
     @Override
     public void run() {
+
         //Avoid server connectivity issues
         while (true) {
             try (ServerSocket serverSocket = new ServerSocket(port)) {
+
                 //Keep alive for each client
                 while (true) {
                     try {
@@ -74,19 +76,21 @@ public class ProxyManager extends Thread {
     private void socketHandler(Socket client) {
         //Delegate to a thread
         new Thread(() -> {
-            try (client){
+            try (client) {
+                log.info("Client accepted {}", client.getInetAddress());
+
                 //Applies filters as security or auth.
                 for (FilterInterface filterInterface : filterInterfaces) {
                     filterInterface.filter(client);
                 }
+
                 //Tries to retrieve data of to which service we need to route/proxy
                 dataCallback.ifPresent(serviceDataCallback -> defaultServiceData = serviceDataCallback.retrieveHostPort());
 
                 //It will proxy all the calls to the service
-                log.info("Client accepted {}", client.getInetAddress());
-                new ClientHandler(client, new Socket(defaultServiceData.getLeft(), defaultServiceData.getRight())).startNow().join();
+                new ClientHandler(client, new Socket(defaultServiceData.getLeft(), defaultServiceData.getRight())).run();
                 log.info("Client finalized {}", client.getInetAddress());
-            } catch (IOException | FilterException | InterruptedException e) {
+            } catch (IOException | FilterException e) {
                 log.info(e.getMessage());
             }
         }).start();
