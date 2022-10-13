@@ -23,7 +23,7 @@ public class Pipe extends Thread {
     public void run() {
         super.run();
         int bytesRead;
-        try (outputStream){
+        try (outputStream) {
             byte[] request = new byte[1000000];
             while ((bytesRead = inputStream.read(request)) != -1) {
                 outputStream.write(request, 0, bytesRead);

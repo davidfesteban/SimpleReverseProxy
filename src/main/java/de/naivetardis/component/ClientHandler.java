@@ -1,5 +1,6 @@
 package de.naivetardis.component;
 
+import de.naivetardis.ProxyManager;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.InputStream;
@@ -32,10 +33,16 @@ public class ClientHandler extends Thread {
             Pipe insidePipe = new Pipe(streamFromClient, streamToServer).startNow();
             Pipe outsidePipe = new Pipe(streamFromServer, streamToClient).startNow();
 
+            //Wait to finish
             insidePipe.join();
             outsidePipe.join();
         } catch (Exception e) {
             log.error(e.getMessage());
         }
+    }
+
+    public ClientHandler startNow() {
+        start();
+        return this;
     }
 }

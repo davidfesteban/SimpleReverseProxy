@@ -1,8 +1,8 @@
 package de.naivetardis;
 
-import de.naivetardis.component.FilterInterface;
+import de.naivetardis.component.ServiceDataCallback;
+import de.naivetardis.filter.FilterInterface;
 
-import java.io.IOException;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -14,14 +14,16 @@ import java.util.TreeSet;
 public class ExposedLauncherBuilder {
     private final Set<FilterInterface> filters;
     private final int port;
+    private ServiceDataCallback serviceDataCallback;
 
     private ExposedLauncherBuilder(int port) {
         this.port = port;
-        filters = new TreeSet<>();
+        this.filters = new TreeSet<>();
+        this.serviceDataCallback = null;
     }
 
     public static void main(String[] args) {
-        ProxyManager.createByDefault(80).startNow();
+        ProxyManager.createByDefault(8080).startNow();
     }
 
     public static ExposedLauncherBuilder create(int port) {
@@ -33,8 +35,13 @@ public class ExposedLauncherBuilder {
         return this;
     }
 
+    public ExposedLauncherBuilder addServiceDataCallback(ServiceDataCallback serviceDataCallback) {
+        this.serviceDataCallback = serviceDataCallback;
+        return this;
+    }
+
     public ProxyManager buildStart() {
-        return ProxyManager.createWithFilters(port, filters).startNow();
+        return ProxyManager.create(port, filters, serviceDataCallback).startNow();
     }
 
 }
