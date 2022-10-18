@@ -1,4 +1,4 @@
-package de.naivetardis.component;
+package de.naivetardis.service.proxy.component;
 
 import lombok.extern.slf4j.Slf4j;
 

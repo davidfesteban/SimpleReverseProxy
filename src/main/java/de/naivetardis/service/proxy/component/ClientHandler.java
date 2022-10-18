@@ -1,6 +1,5 @@
-package de.naivetardis.component;
+package de.naivetardis.service.proxy.component;
 
-import de.naivetardis.ProxyManager;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.InputStream;

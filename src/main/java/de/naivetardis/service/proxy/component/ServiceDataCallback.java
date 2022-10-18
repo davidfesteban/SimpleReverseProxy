@@ -1,4 +1,4 @@
-package de.naivetardis.component;
+package de.naivetardis.service.proxy.component;
 
 import org.apache.commons.lang3.tuple.Pair;
 
