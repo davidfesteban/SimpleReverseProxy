@@ -13,18 +13,15 @@ import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.TreeMap;
-import java.util.function.Supplier;
 
 @Slf4j
 public class AuthService extends Thread {
     private final Map<String, String> authenticatedUsers;
-    private final RandomString randomString;
     private final Properties context;
 
     public AuthService() {
+        super(AuthService.class.getName());
         this.authenticatedUsers = new HashMap<>();
-        this.randomString = new RandomString(10);
         this.context = PropertiesContext.getInstance().getContext();
     }
 
@@ -52,6 +49,5 @@ public class AuthService extends Thread {
         server.start();
         log.info("External Auth Server started");
     }
-
 
 }

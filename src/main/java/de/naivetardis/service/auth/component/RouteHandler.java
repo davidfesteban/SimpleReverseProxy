@@ -7,11 +7,12 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.function.Supplier;
 
-class RouteHandler extends BasicHandler {
-    private final RandomString randomString = new RandomString(10);
+public class RouteHandler extends BasicHandler {
+    private final RandomString randomString;
 
     public RouteHandler(Supplier<Map<String, String>> supplier) {
         super(supplier);
+        randomString = new RandomString(10);
     }
 
     @Override

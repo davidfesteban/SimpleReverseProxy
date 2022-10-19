@@ -1,0 +1,7 @@
+de/naivetardis/filter/FilterException.class
+de/naivetardis/ExposedLauncherBuilder.class
+de/naivetardis/ProxyManager.class
+de/naivetardis/filter/FilterInterface.class
+de/naivetardis/component/ClientHandler.class
+de/naivetardis/component/Pipe.class
+de/naivetardis/component/ServiceDataCallback.class

@@ -2,14 +2,13 @@ package de.naivetardis.service.auth.component;
 
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.util.Map;
 import java.util.function.Supplier;
 
-class VerifyHandler extends BasicHandler {
+public class VerifyHandler extends BasicHandler {
     public VerifyHandler(Supplier<Map<String, String>> supplier) {
         super(supplier);
     }
@@ -27,8 +26,7 @@ class VerifyHandler extends BasicHandler {
 
     private String getServiceFromToken(HttpExchange exchange) {
         Map<String, String> queryParams = queryToMap(exchange.getRequestURI().getQuery());
-        if(queryParams != null)
-        {
+        if (queryParams != null) {
             return security().getOrDefault(queryParams.getOrDefault("id", ""), "");
         }
         return null;

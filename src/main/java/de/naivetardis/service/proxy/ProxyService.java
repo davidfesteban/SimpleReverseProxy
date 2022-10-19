@@ -2,42 +2,29 @@ package de.naivetardis.service.proxy;
 
 import de.naivetardis.service.proxy.component.ClientHandler;
 import de.naivetardis.service.proxy.component.ServiceDataCallback;
+import de.naivetardis.service.utils.PropertiesContext;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.http.HttpClient;
 import java.util.Optional;
+import java.util.Properties;
 
 @Slf4j
 public class ProxyService extends Thread {
 
-    private static final String DEFAULT_SERVICE_IP = "127.0.0.1";
-    private static final int DEFAULT_SERVICE_PORT = 1234;
-
-    private final Optional<ServiceDataCallback> dataCallback;
+    private final Properties context;
     private int port;
-
     private Pair<String, Integer> defaultServiceData;
 
-    private ProxyService(int port) {
-        this(port, null);
-    }
-
-    private ProxyService(int port, ServiceDataCallback serviceDataCallback) {
+    public ProxyService() {
         super(ProxyService.class.getName());
-        this.port = port;
-        this.dataCallback = Optional.ofNullable(serviceDataCallback);
-        this.defaultServiceData = Pair.of(DEFAULT_SERVICE_IP, DEFAULT_SERVICE_PORT);
-    }
-
-    static ProxyService createByDefault(int port) {
-        return new ProxyService(port);
-    }
-
-    static ProxyService create(int port, ServiceDataCallback serviceDataCallback) {
-        return new ProxyService(port, serviceDataCallback);
+        this.context = PropertiesContext.getInstance().getContext();
+        this.port = Integer.parseInt(context.getProperty("proxy.port.external"));
+        this.defaultServiceData = Pair.of(context.getProperty("service.ip"), Integer.parseInt(context.getProperty("service.port")));
     }
 
     @Override
@@ -61,20 +48,13 @@ public class ProxyService extends Thread {
         }
     }
 
-    public ProxyService startNow() {
-        start();
-        return this;
-    }
-
     private void socketHandler(Socket client) {
         //Delegate to a thread
         new Thread(() -> {
             try (client) {
                 log.info("Client accepted {}", client.getInetAddress());
 
-                //Tries to retrieve data of to which service we need to route/proxy
-                //dataCallback.ifPresent(serviceDataCallback -> defaultServiceData = serviceDataCallback.retrieveHostPort());
-
+                //Check client on Auth Service
 
                 //It will proxy all the calls to the service
                 new ClientHandler(client, new Socket(defaultServiceData.getLeft(), defaultServiceData.getRight())).run();
