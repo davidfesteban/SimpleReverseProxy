@@ -29,18 +29,12 @@ public class ProxyService extends Thread {
 
     @Override
     public void run() {
-
         //Avoid server connectivity issues
         while (true) {
             try (ServerSocket serverSocket = new ServerSocket(port)) {
-
                 //Keep alive for each client
                 while (true) {
-                    try {
-                        socketHandler(serverSocket.accept());
-                    } catch (IOException e) {
-                        log.info(e.getMessage());
-                    }
+                    new ClientHandler(serverSocket.accept(), new Socket(defaultServiceData.getLeft(), defaultServiceData.getRight())).start();
                 }
             } catch (IOException e) {
                 log.error(e.getMessage());
@@ -48,21 +42,5 @@ public class ProxyService extends Thread {
         }
     }
 
-    private void socketHandler(Socket client) {
-        //Delegate to a thread
-        new Thread(() -> {
-            try (client) {
-                log.info("Client accepted {}", client.getInetAddress());
 
-                //Check client on Auth Service
-
-                //It will proxy all the calls to the service
-                new ClientHandler(client, new Socket(defaultServiceData.getLeft(), defaultServiceData.getRight())).run();
-                log.info("Client finalized {}", client.getInetAddress());
-            } catch (IOException e) {
-                log.info(e.getMessage());
-            }
-        }).start();
-
-    }
 }
