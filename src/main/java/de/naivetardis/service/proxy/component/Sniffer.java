@@ -17,7 +17,7 @@ public class Sniffer {
         this.inputStream = Objects.requireNonNull(inputStream);
     }
 
-    public void read() {
+    public String read() {
         try {
             BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
             String inputLine;
@@ -28,10 +28,8 @@ public class Sniffer {
         } catch (IOException e) {
             log.error(e.getMessage());
         }
-    }
 
-    public boolean applyFilter(Predicate<String> filter) {
-        return filter.test(reallyLongRequest.toString());
+        return reallyLongRequest.toString();
     }
 
     public InputStream getStoredInputStream() {

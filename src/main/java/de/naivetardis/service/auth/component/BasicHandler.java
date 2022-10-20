@@ -22,7 +22,7 @@ abstract class BasicHandler implements HttpHandler {
 
     void redirect(HttpExchange exchange) throws IOException {
         Headers responseHeaders = exchange.getResponseHeaders();
-        responseHeaders.set("Location", "http://"+context.getProperty("ip.localhost")+":"+context.getProperty("proxy.port.external"));
+        responseHeaders.set("Location", context.getProperty("ip.localhost")+context.getProperty("proxy.port.external"));
         exchange.sendResponseHeaders(308, 0);
     }
 
