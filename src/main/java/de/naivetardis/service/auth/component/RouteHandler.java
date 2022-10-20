@@ -36,7 +36,7 @@ public class RouteHandler extends BasicHandler {
 
         if (queryParams != null) {
             return queryParams.getOrDefault("email", "").equalsIgnoreCase(context("security.email"))
-                    && queryParams.getOrDefault("pswd", "").equalsIgnoreCase("security.pswd");
+                    && queryParams.getOrDefault("pswd", "").equalsIgnoreCase(context("security.pswd"));
         }
 
         return false;
