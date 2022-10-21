@@ -5,16 +5,15 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PushbackInputStream;
 import java.util.Objects;
 
 @Slf4j
-public class Pipe extends Thread {
+public class ServerPipe extends Thread {
 
     private final InputStream inputStream;
     private final OutputStream outputStream;
 
-    public Pipe(InputStream inputStream, OutputStream outputStream) {
+    public ServerPipe(InputStream inputStream, OutputStream outputStream) {
         super();
         this.inputStream = Objects.requireNonNull(inputStream);
         this.outputStream = Objects.requireNonNull(outputStream);
@@ -36,7 +35,7 @@ public class Pipe extends Thread {
         }
     }
 
-    public Pipe startNow() {
+    public ServerPipe startNow() {
         start();
         return this;
     }

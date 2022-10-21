@@ -28,7 +28,7 @@ abstract class BasicHandler implements HttpHandler {
         //responseHeaders.set("Location", context.getProperty("ip.localhost") + context.getProperty("proxy.port.external"));
         //exchange.sendResponseHeaders(308, 0);
         String response = Files.readString(Path.of("src/main/resources/web/redirect.html"));
-        response = response.replace("{}", context.getProperty("ip.localhost") + context.getProperty("proxy.port.external"));
+        response = response.replace("{}", context.getProperty("ip.localhost").replace("localhost", exchange.getRequestHeaders().get("Host").get(0)) + context.getProperty("proxy.port.external"));
         exchange.sendResponseHeaders(200, response.length());
         exchange.getResponseBody().write(response.getBytes());
         exchange.getResponseBody().close();
