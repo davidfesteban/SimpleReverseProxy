@@ -4,13 +4,11 @@ import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 
 import java.io.IOException;
-import java.util.Map;
-import java.util.function.Supplier;
 
 public class CheckAuthHandler extends BasicHandler {
 
-    public CheckAuthHandler(Supplier<Map<String, String>> supplier) {
-        super(supplier);
+    public CheckAuthHandler() {
+        super();
     }
 
     @Override
@@ -24,8 +22,8 @@ public class CheckAuthHandler extends BasicHandler {
 
     private boolean isAuthenticated(HttpExchange exchange) {
         Headers headers = exchange.getRequestHeaders();
-        if (headers.get(context("header.token")) != null && !headers.get(context("header.token")).isEmpty()) {
-            return security().containsKey(headers.get(context("header.token")).get(0));
+        if (headers.get(context("header.cookie.get")) != null && !headers.get(context("header.cookie.get")).isEmpty()) {
+            return security().containsKey(headers.get(context("header.cookie.get")).get(0).replace(context("header.token")+"=",""));
         }
         return false;
     }

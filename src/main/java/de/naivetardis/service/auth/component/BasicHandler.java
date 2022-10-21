@@ -9,21 +9,29 @@ import lombok.AllArgsConstructor;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.function.Supplier;
 
 @AllArgsConstructor
 abstract class BasicHandler implements HttpHandler {
-    private final Properties context = PropertiesContext.getInstance().getContext();
+    private final Properties context;
+    private static final Map<String, Date> loggedTokens = new HashMap<>();
 
-    private final Supplier<Map<String, String>> supplier;
+    public BasicHandler() {
+        this.context = PropertiesContext.getInstance().getContext();
+    }
 
     void redirect(HttpExchange exchange) throws IOException {
-        Headers responseHeaders = exchange.getResponseHeaders();
-        responseHeaders.set("Location", context.getProperty("ip.localhost")+context.getProperty("proxy.port.external"));
-        exchange.sendResponseHeaders(308, 0);
+        //Headers responseHeaders = exchange.getResponseHeaders();
+        //responseHeaders.set("Location", context.getProperty("ip.localhost") + context.getProperty("proxy.port.external"));
+        //exchange.sendResponseHeaders(308, 0);
+        String response = Files.readString(Path.of("src/main/resources/web/redirect.html"));
+        response = response.replace("{}", context.getProperty("ip.localhost") + context.getProperty("proxy.port.external"));
+        exchange.sendResponseHeaders(200, response.length());
+        exchange.getResponseBody().write(response.getBytes());
+        exchange.getResponseBody().close();
     }
 
     void authView(HttpExchange exchange) throws IOException {
@@ -53,7 +61,7 @@ abstract class BasicHandler implements HttpHandler {
         return context.getProperty(key);
     }
 
-    Map<String, String> security(){
-        return supplier.get();
+    Map<String, Date> security() {
+        return loggedTokens;
     }
 }

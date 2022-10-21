@@ -5,23 +5,18 @@ import de.naivetardis.service.auth.component.CheckAuthHandler;
 import de.naivetardis.service.auth.component.RouteHandler;
 import de.naivetardis.service.auth.component.VerifyHandler;
 import de.naivetardis.service.utils.PropertiesContext;
-import de.naivetardis.service.utils.RandomString;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 
 @Slf4j
 public class AuthService extends Thread {
-    private final Map<String, String> authenticatedUsers;
     private final Properties context;
 
     public AuthService() {
         super(AuthService.class.getName());
-        this.authenticatedUsers = new HashMap<>();
         this.context = PropertiesContext.getInstance().getContext();
     }
 
@@ -37,15 +32,15 @@ public class AuthService extends Thread {
 
     private void startInternalServer() throws IOException {
         HttpServer serverVerify = HttpServer.create(new InetSocketAddress(Integer.parseInt(context.getProperty("auth.port.internal"))), 0);
-        serverVerify.createContext(context.getProperty("auth.verify"), new VerifyHandler(() -> authenticatedUsers));
+        serverVerify.createContext(context.getProperty("auth.verify.path"), new VerifyHandler());
         serverVerify.start();
         log.info("Internal Auth Server started");
     }
 
     private void startExternalServer() throws IOException {
         HttpServer server = HttpServer.create(new InetSocketAddress(Integer.parseInt(context.getProperty("auth.port.external"))), 0);
-        server.createContext(context.getProperty("auth.traffic"), new CheckAuthHandler(() -> authenticatedUsers));
-        server.createContext(context.getProperty("auth.auth"), new RouteHandler(() -> authenticatedUsers));
+        server.createContext(context.getProperty("auth.traffic"), new CheckAuthHandler());
+        server.createContext(context.getProperty("auth.auth"), new RouteHandler());
         server.start();
         log.info("External Auth Server started");
     }
