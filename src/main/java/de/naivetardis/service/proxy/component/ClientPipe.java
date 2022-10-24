@@ -1,10 +1,8 @@
 package de.naivetardis.service.proxy.component;
 
 import com.github.dockerjava.api.DockerClient;
-import com.github.dockerjava.api.model.Container;
 import com.github.dockerjava.core.DockerClientBuilder;
 import de.naivetardis.service.utils.PropertiesContext;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
@@ -12,7 +10,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.net.URI;
-import java.net.UnknownHostException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -21,11 +18,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
-@Slf4j
+//@Slf4j
 public class ClientPipe extends Thread {
 
     private final InputStream inputStream;
@@ -76,7 +70,7 @@ public class ClientPipe extends Thread {
             if (e instanceof SecurityException) {
                 throw new SecurityException(e);
             } else {
-                log.error(e.getMessage());
+                //log.error(e.getMessage());
             }
         } finally {
             try {
@@ -131,8 +125,8 @@ public class ClientPipe extends Thread {
                                         throw new RuntimeException(e);
                                     }
                                 });
-                    }catch (Exception e) {
-                        log.error(e.getMessage());
+                    } catch (Exception e) {
+                        //log.error(e.getMessage());
                     }
                 });
     }
@@ -141,7 +135,7 @@ public class ClientPipe extends Thread {
         //Sniffer starts reading
         String incomingText = new String(request, StandardCharsets.UTF_8);
         String headerTokenValue = readHeaderToken(incomingText);
-        log.info("Header token found = {}", headerTokenValue);
+        //log.info("Header token found = {}", headerTokenValue);
 
         //Validate client is authenticated
         throwExceptionIfNotAuthenticated(buildValidationRequest(headerTokenValue));
@@ -152,7 +146,7 @@ public class ClientPipe extends Thread {
         try {
             HttpResponse<String> response = HttpClient.newHttpClient().send(validationRequest, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() != 200) {
-                log.error("Verify error {}", response.statusCode());
+                //log.error("Verify error {}", response.statusCode());
                 throw new SecurityException();
             }
         } catch (IOException | InterruptedException e) {
@@ -161,7 +155,7 @@ public class ClientPipe extends Thread {
     }
 
     private String readHeaderToken(String incomingText) {
-        final StringBuilder result = new StringBuilder("");
+        final StringBuilder result = new StringBuilder();
 
         Arrays.stream(incomingText.split(StringUtils.LF))
                 .filter(s -> s.contains(context.getProperty("header.cookie.get")) && s.contains(context.getProperty("header.token")))

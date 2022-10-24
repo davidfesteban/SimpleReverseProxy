@@ -2,16 +2,15 @@ package de.naivetardis.service.proxy;
 
 import de.naivetardis.service.proxy.component.ClientHandler;
 import de.naivetardis.service.utils.PropertiesContext;
-import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.Properties;
 
-@Slf4j
+//@Slf4j
 public class ProxyService extends Thread {
     private final Properties context;
-    private int port;
+    private final int port;
 
     public ProxyService() {
         super(ProxyService.class.getName());
@@ -29,7 +28,7 @@ public class ProxyService extends Thread {
                     new ClientHandler(serverSocket.accept()).start();
                 }
             } catch (IOException e) {
-                log.error(e.getMessage());
+                //log.error(e.getMessage());
             }
         }
     }

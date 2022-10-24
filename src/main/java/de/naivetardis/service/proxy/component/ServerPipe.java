@@ -1,13 +1,11 @@
 package de.naivetardis.service.proxy.component;
 
-import lombok.extern.slf4j.Slf4j;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Objects;
 
-@Slf4j
+//@Slf4j
 public class ServerPipe extends Thread {
 
     private final InputStream inputStream;
@@ -31,7 +29,7 @@ public class ServerPipe extends Thread {
                 request = new byte[1000000];
             }
         } catch (IOException e) {
-            log.error(e.getMessage());
+            //log.error(e.getMessage());
         }
     }
 

@@ -2,8 +2,6 @@ package de.naivetardis.service.auth.component;
 
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
-import org.apache.commons.lang3.mutable.Mutable;
-import org.apache.commons.lang3.mutable.MutableBoolean;
 
 import java.io.IOException;
 
@@ -23,7 +21,7 @@ public class TrafficHandler extends BasicHandler {
     }
 
     private boolean isAuthenticated(HttpExchange exchange) {
-        final Mutable<Boolean> result = new MutableBoolean(false);
+        final Wrapper<Boolean> result = new Wrapper<>(false);
         Headers headers = exchange.getRequestHeaders();
 
         if (headers.get(context("header.cookie.get")) != null && !headers.get(context("header.cookie.get")).isEmpty()) {
@@ -34,5 +32,21 @@ public class TrafficHandler extends BasicHandler {
         }
 
         return result.getValue();
+    }
+
+    protected class Wrapper<T> {
+        T element;
+
+        public Wrapper(T element) {
+            this.element = element;
+        }
+
+        public T getValue() {
+            return element;
+        }
+
+        public void setValue(T element) {
+            this.element = element;
+        }
     }
 }

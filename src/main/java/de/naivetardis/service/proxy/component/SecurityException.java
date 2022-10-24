@@ -1,6 +1,6 @@
 package de.naivetardis.service.proxy.component;
 
-public class SecurityException extends RuntimeException{
+public class SecurityException extends RuntimeException {
     public SecurityException(Exception e) {
         super(e);
     }

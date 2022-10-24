@@ -1,12 +1,10 @@
 package de.naivetardis.service.proxy.component;
 
-import lombok.extern.slf4j.Slf4j;
-
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
-@Slf4j
+//@Slf4j
 public class ClientHandler extends Thread {
     private final Socket client;
 
@@ -17,7 +15,7 @@ public class ClientHandler extends Thread {
 
     @Override
     public void run() {
-        log.info("Client accepted {}", client.getInetAddress());
+        //log.info("Client accepted {}", client.getInetAddress());
         try (client;
              final InputStream streamFromClient = client.getInputStream();
              final OutputStream streamToClient = client.getOutputStream()) {
@@ -31,9 +29,9 @@ public class ClientHandler extends Thread {
             outsideServerPipe.join();
 
         } catch (Exception e) {
-            log.error(e.getMessage());
+            //log.error(e.getMessage());
         } finally {
-            log.info("Client finalized {}", client.getInetAddress());
+            //log.info("Client finalized {}", client.getInetAddress());
             this.interrupt();
         }
     }
