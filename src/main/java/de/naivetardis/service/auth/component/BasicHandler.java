@@ -1,6 +1,5 @@
 package de.naivetardis.service.auth.component;
 
-import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import de.naivetardis.service.utils.PropertiesContext;
@@ -16,17 +15,14 @@ import java.util.Properties;
 
 @AllArgsConstructor
 abstract class BasicHandler implements HttpHandler {
-    private final Properties context;
     private static final Map<String, Date> loggedTokens = new HashMap<>();
+    private final Properties context;
 
     public BasicHandler() {
         this.context = PropertiesContext.getInstance().getContext();
     }
 
     void redirect(HttpExchange exchange) throws IOException {
-        //Headers responseHeaders = exchange.getResponseHeaders();
-        //responseHeaders.set("Location", context.getProperty("ip.localhost") + context.getProperty("proxy.port.external"));
-        //exchange.sendResponseHeaders(308, 0);
         String response = Files.readString(Path.of("src/main/resources/web/redirect.html"));
         response = response.replace("{}", context.getProperty("ip.localhost").replace("localhost", exchange.getRequestHeaders().get("Host").get(0)) + context.getProperty("proxy.port.external"));
         exchange.sendResponseHeaders(200, response.length());

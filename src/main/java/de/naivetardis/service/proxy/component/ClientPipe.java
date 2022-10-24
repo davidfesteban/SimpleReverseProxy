@@ -99,9 +99,7 @@ public class ClientPipe extends Thread {
                 Thread.sleep(500);
             }
             return serviceSocket.getInputStream();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
+        } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
     }

@@ -10,12 +10,10 @@ import java.util.Properties;
 @Slf4j
 public class ClientHandler extends Thread {
     private final Socket client;
-    private final Properties context;
 
     public ClientHandler(Socket client) {
         super();
         this.client = client;
-        this.context = PropertiesContext.getInstance().getContext();
     }
 
     @Override
@@ -32,8 +30,6 @@ public class ClientHandler extends Thread {
                 //Wait to finish
                 insidePipe.join();
                 outsideServerPipe.join();
-
-
 
         } catch (Exception e) {
             log.error(e.getMessage());
