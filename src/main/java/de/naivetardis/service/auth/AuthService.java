@@ -1,8 +1,8 @@
 package de.naivetardis.service.auth;
 
 import com.sun.net.httpserver.HttpServer;
-import de.naivetardis.service.auth.component.CheckAuthHandler;
-import de.naivetardis.service.auth.component.RouteHandler;
+import de.naivetardis.service.auth.component.TrafficHandler;
+import de.naivetardis.service.auth.component.AuthHandler;
 import de.naivetardis.service.auth.component.VerifyHandler;
 import de.naivetardis.service.utils.PropertiesContext;
 import lombok.extern.slf4j.Slf4j;
@@ -39,8 +39,8 @@ public class AuthService extends Thread {
 
     private void startExternalServer() throws IOException {
         HttpServer server = HttpServer.create(new InetSocketAddress(Integer.parseInt(context.getProperty("auth.port.external"))), 0);
-        server.createContext(context.getProperty("auth.traffic"), new CheckAuthHandler());
-        server.createContext(context.getProperty("auth.auth"), new RouteHandler());
+        server.createContext(context.getProperty("auth.traffic"), new TrafficHandler());
+        server.createContext(context.getProperty("auth.auth"), new AuthHandler());
         server.start();
         log.info("External Auth Server started");
     }

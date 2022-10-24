@@ -67,7 +67,6 @@ public class ClientPipe extends Thread {
                     }
                 }
 
-
                 outputStream.write(request, 0, bytesRead);
                 outputStream.flush();
                 request = new byte[1000000];
@@ -81,6 +80,7 @@ public class ClientPipe extends Thread {
             }
         } finally {
             try {
+                this.interrupt();
                 outputStream.close();
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -110,24 +110,30 @@ public class ClientPipe extends Thread {
         Arrays.stream(incomingText.split(StringUtils.LF))
                 .filter(s -> s.contains("Host"))
                 .findFirst()
-                .map(s -> s.replace("Host: ", "").split(".")[0])
+                .map(s -> {
+                    String temp = s.replace("Host: ", "");
+                    return temp.substring(0, temp.indexOf("."));
+                })
                 .ifPresent(s -> {
-                    DockerClient dockerClient = DockerClientBuilder.getInstance(context.getProperty("docker.api.url")).build();
-                    dockerClient.listContainersCmd()
-                            .withShowAll(true)
-                            .withShowSize(true)
-                            .withStatusFilter(List.of("running"))
-                            .exec()
-                            .stream()
-                            .filter(container -> container.getNames()[0].contains(s))
-                            .findFirst()
-                            .ifPresent(container -> {
-                                try {
-                                    serviceSocket = new Socket(context.getProperty("service.ip"), container.getPorts()[0].getPublicPort());
-                                } catch (IOException e) {
-                                    throw new RuntimeException(e);
-                                }
-                            });
+                    try (DockerClient dockerClient = DockerClientBuilder.getInstance(context.getProperty("docker.api.url")).build()) {
+                        dockerClient.listContainersCmd()
+                                .withShowAll(true)
+                                .withShowSize(true)
+                                .withStatusFilter(List.of("running"))
+                                .exec()
+                                .stream()
+                                .filter(container -> container.getNames()[0].replace("/", "").equalsIgnoreCase(s))
+                                .findFirst()
+                                .ifPresent(container -> {
+                                    try {
+                                        serviceSocket = new Socket(context.getProperty("service.ip"), container.getPorts()[0].getPublicPort());
+                                    } catch (IOException e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                });
+                    }catch (Exception e) {
+                        log.error(e.getMessage());
+                    }
                 });
     }
 
@@ -135,7 +141,7 @@ public class ClientPipe extends Thread {
         //Sniffer starts reading
         String incomingText = new String(request, StandardCharsets.UTF_8);
         String headerTokenValue = readHeaderToken(incomingText);
-        log.info(headerTokenValue);
+        log.info("Header token found = {}", headerTokenValue);
 
         //Validate client is authenticated
         throwExceptionIfNotAuthenticated(buildValidationRequest(headerTokenValue));
@@ -146,6 +152,7 @@ public class ClientPipe extends Thread {
         try {
             HttpResponse<String> response = HttpClient.newHttpClient().send(validationRequest, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() != 200) {
+                log.error("Verify error {}", response.statusCode());
                 throw new SecurityException();
             }
         } catch (IOException | InterruptedException e) {
@@ -157,7 +164,7 @@ public class ClientPipe extends Thread {
         final StringBuilder result = new StringBuilder("");
 
         Arrays.stream(incomingText.split(StringUtils.LF))
-                .filter(s -> s.contains(context.getProperty("header.cookie.get")))
+                .filter(s -> s.contains(context.getProperty("header.cookie.get")) && s.contains(context.getProperty("header.token")))
                 .findFirst()
                 .map(s -> s.substring(s.indexOf(token()) + token().length(), s.indexOf(token()) + token().length() + randomLength()))
                 .ifPresent(result::append);

@@ -9,11 +9,11 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Properties;
 
-public class RouteHandler extends BasicHandler {
+public class AuthHandler extends BasicHandler {
     private final RandomString randomString;
     private final Properties context;
 
-    public RouteHandler() {
+    public AuthHandler() {
         super();
         context = PropertiesContext.getInstance().getContext();
         randomString = new RandomString(Integer.parseInt(context.getProperty("random.length")));
@@ -38,11 +38,7 @@ public class RouteHandler extends BasicHandler {
     private boolean isAuthSuccessfull(HttpExchange exchange) {
         Map<String, String> queryParams = queryToMap(exchange.getRequestURI().getQuery());
 
-        if (queryParams != null) {
-            return queryParams.getOrDefault("email", "").equalsIgnoreCase(context("security.email"))
-                    && queryParams.getOrDefault("pswd", "").equalsIgnoreCase(context("security.pswd"));
-        }
-
-        return false;
+        return queryParams != null && queryParams.getOrDefault("email", "").equalsIgnoreCase(context("security.email"))
+                && queryParams.getOrDefault("pswd", "").equalsIgnoreCase(context("security.pswd"));
     }
 }

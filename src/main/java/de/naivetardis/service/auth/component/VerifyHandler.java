@@ -22,11 +22,7 @@ public class VerifyHandler extends BasicHandler {
 
     private boolean isTokenOnMemory(HttpExchange exchange) {
         Map<String, String> queryParams = queryToMap(exchange.getRequestURI().getQuery());
-        if (queryParams != null) {
-            return security().containsKey(queryParams.getOrDefault("id", ""));
-        }
-        return false;
+
+        return queryParams != null && security().containsKey(queryParams.getOrDefault("id", ""));
     }
-
-
 }

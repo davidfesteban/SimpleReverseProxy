@@ -3,7 +3,6 @@ package de.naivetardis.service.auth.component;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import de.naivetardis.service.utils.PropertiesContext;
-import lombok.AllArgsConstructor;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -13,7 +12,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-@AllArgsConstructor
 abstract class BasicHandler implements HttpHandler {
     private static final Map<String, Date> loggedTokens = new HashMap<>();
     private final Properties context;

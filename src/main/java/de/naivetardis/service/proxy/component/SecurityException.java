@@ -6,6 +6,6 @@ public class SecurityException extends RuntimeException{
     }
 
     public SecurityException() {
-        super("Error in auth");
+        super();
     }
 }
